@@ -24,6 +24,8 @@ class LoginController {
 		$password = $this->view->getPassword();
 	}
 
-
+	public function Hej() {
+		$this->model->getLoginData();
+	}
 }
 
