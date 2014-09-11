@@ -4,9 +4,9 @@ require_once("src/controller/LoginController.php");
 require_once("../common/HTMLView.php");
 
 $logincontroller = new \controller\LoginController();
-$formhtml = $logincontroller->showLogin();
 
-$logincontroller->Hej();
+$html = $logincontroller->doDisplay();
 
 $view = new HTMLView();
-$view->echoHTML($formhtml);
+
+$view->echoHTML($html);

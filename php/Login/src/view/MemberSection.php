@@ -4,14 +4,39 @@ namespace view;
 
 class MemberSection {
 
+	private $logoutLocation = "logout";
+
 	public function __construct() {
 
 	}
 
-	public function showMemberSection () {
-		$htmlbody = "<h2>Admin är inloggad</h2>
+	public function getDate() {
+		$date = "";
 
-		<a href='?logout'>Logga ut</a>";
+		$dayofWeek = date("l");
+		$day = date("d");
+		$month = date("F");
+		$year = date("Y");
+		$time = date("H:i:s");
+
+		$date .=   $dayofWeek . ",  the " . $day . " " . $month . " " . $year . ". The clock is [" . $time . "].";
+
+		return $date;
+	}	
+
+
+	public function showMemberSection () {
+		$date = $this->getDate();
+
+		$htmlbody = 
+		"<h2>Admin is logged in</h2>
+
+		<a href='?$this->logoutLocation'>Log out</a>
+
+		</br>
+		</br>
+
+		$date";
 
 		return $htmlbody;
 	}
