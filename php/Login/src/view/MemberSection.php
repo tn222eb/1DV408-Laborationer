@@ -11,32 +11,37 @@ class MemberSection {
 	}
 
 	public function getDate() {
+		setlocale(LC_ALL, "swedish");
+
 		$date = "";
 
-		$dayofWeek = date("l");
-		$day = date("d");
-		$month = date("F");
-		$year = date("Y");
-		$time = date("H:i:s");
+		$dayofWeek = ucfirst(strftime("%A"));
+		$day = strftime("%d");
+		$month = ucfirst(strftime("%B"));
+		$year = strftime("%Y");
+		$time = strftime("%X");
 
-		$date .=   $dayofWeek . ",  the " . $day . " " . $month . " " . $year . ". The clock is [" . $time . "].";
+		$date .=   $dayofWeek . ",  Den " . $day . " " . $month . " år " . $year . ". Klockan är [" . $time . "].";
 
 		return $date;
 	}	
-
 
 	public function showMemberSection () {
 		$date = $this->getDate();
 
 		$htmlbody = 
-		"<h2>Admin is logged in</h2>
-
-		<a href='?$this->logoutLocation'>Log out</a>
+		"<form method='post'>
+		<h2>Admin är inloggad</h2>
+		<input type='submit' value='Logga ut' name='$this->logoutLocation'>
 
 		</br>
 		</br>
 
-		$date";
+		$date
+
+		</form>
+
+		";
 
 		return $htmlbody;
 	}

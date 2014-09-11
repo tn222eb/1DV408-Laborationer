@@ -55,28 +55,26 @@ class LoginView {
 	}
 
 	public function hasLogOut () {
-		if(isset($_GET[$this->logoutLocation])) {
+		if(isset($_POST[$this->logoutLocation]) == true) {
 			return true;
 		}
-		
 		return false;
 	}
 
 	public function getDate() {
+		setlocale(LC_ALL, "swedish");
 
 		$date = "";
 
-		$dayofWeek = date("l");
-		$day = date("d");
-		$month = date("F");
-		$year = date("Y");
-		$time = date("H:i:s");
+		$dayofWeek = ucfirst(strftime("%A"));
+		$day = strftime("%d");
+		$month = ucfirst(strftime("%B"));
+		$year = strftime("%Y");
+		$time = strftime("%X");
 
-		$date .=   $dayofWeek . ",  the " . $day . " " . $month . " " . $year . ". The clock is [" . $time . "].";
+		$date .=   $dayofWeek . ",  Den " . $day . " " . $month . " år " . $year . ". Klockan är [" . $time . "].";
 
 		return $date;
-
-
 	}
 
 	public function showLoginForm () {
@@ -86,20 +84,20 @@ class LoginView {
 		$htmlbody = 
 		"<form method='post'>
 
-		<h2>Not logged in</h2>
+		<h2>Ej inloggad</h2>
 		<fieldset>
-		<legend>Login - Enter your username and password</legend>
+		<legend>Logga in - Skriv in användarnamn och lösenord</legend>
 
-		Username:
+		Användarnamn:
 		<input type='text' name='$this->userNameLocation' maxlength='35'>
 
-		Password:
+		Lösenord:
 		<input type='password' name='$this->passwordLocation' maxlength='35'>
 
-		Keep me logged in:
+		Håll mig inloggad:
 		<input type='checkbox' name='checkbox' value='keeploggedin'>
 
-		<input type='submit' name='submit' value='Log in'>
+		<input type='submit' name='submit' value='Logga in'>
 
 		</fieldset>
 

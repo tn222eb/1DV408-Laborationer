@@ -6,14 +6,16 @@ class LoginModel {
 
 	private $loginPassword;
 	private $loginUserName;
-	public $isLoggedIn = false;
 
 	public function __construct() {
 		$this->getLoginData();
+
+		session_start();
 	}
 
 	public function isLoggedIn() {
-		if ($this->isLoggedIn == true) {
+		if (isset($_SESSION["valid"]) == true)
+		 {
 			return true;
 		}	
 
@@ -31,14 +33,12 @@ class LoginModel {
 	}
 
 	public function logIn($username, $password) {
-
 		if ($username == $this->loginUserName && $password == $this->loginPassword) {
-			echo "You are logged in";
-			$this->isLoggedIn = true;
+			$_SESSION["valid"] = true;
 		}
 	}
 
 	public function logOut() {
-		$this->isLoggedIn = false;
+		unset($_SESSION["valid"]);
 	}	
 }
