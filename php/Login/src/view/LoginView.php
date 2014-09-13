@@ -3,18 +3,15 @@
 namespace view;
 
 require_once("src/model/LoginModel.php");
-require_once("src/view/CookieStorage.php");
 
 class LoginView {
 	private $model;
 	private $userNameLocation = "username";
 	private $passwordLocation = "password";
 	private $logoutLocation = "logout";
-	private $cookieStorage;
 
 	public function __construct(\model\ LoginModel $model) {
 		$this->model = $model;
-		$this->cookieStorage = new \view\CookieStorage();
 	}
 
 	public function hasUserName() {
@@ -66,7 +63,7 @@ class LoginView {
 
 		$date = "";
 
-		$dayofWeek = ucfirst(strftime("%A"));
+		$dayofWeek = utf8_encode(ucfirst(strftime("%A")));
 		$day = strftime("%d");
 		$month = ucfirst(strftime("%B"));
 		$year = strftime("%Y");
@@ -83,11 +80,7 @@ class LoginView {
 		$username = "";
 
 		if ($this->hasLogOut() == true) {
-			$this->cookieStorage->save("</br> Utloggning lyckades </br> </br>");
-			header("location:");
-		}
-		else {
-			$message .= $this->cookieStorage->load();
+			$message .= "</br> Utloggning lyckades </br> </br>";
 		}
 
 		if ($this->hasSubmit() == true) {
@@ -144,11 +137,7 @@ class LoginView {
 		$message = "";
 
 		if($this->hasSubmit() == true) {
-			$this->cookieStorage->save("</br> Inloggning lyckades </br> </br>");
-			header("location:");
-		}
-		else {
-			$message .= $this->cookieStorage->load();
+			$message .= "</br> Inloggning lyckades </br> </br>";
 		}
 
 		$htmlbody = 
