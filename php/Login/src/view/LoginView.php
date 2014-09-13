@@ -3,21 +3,22 @@
 namespace view;
 
 require_once("src/model/LoginModel.php");
-
+require_once("src/view/CookieStorage.php");
 
 class LoginView {
-
 	private $model;
 	private $userNameLocation = "username";
 	private $passwordLocation = "password";
 	private $logoutLocation = "logout";
+	private $cookieStorage;
 
 	public function __construct(\model\ LoginModel $model) {
 		$this->model = $model;
+		$this->cookieStorage = new \view\CookieStorage();
 	}
 
 	public function hasUserName() {
-		if(isset($_POST[$this->userNameLocation]) == true) {
+		if(!empty($_POST[$this->userNameLocation]) == true) {
 			return true;
 		}
 
@@ -26,14 +27,13 @@ class LoginView {
 	}
 
 	public function hasPassword() {
-		if(isset($_POST[$this->passwordLocation]) == true) {
+		if(!empty($_POST[$this->passwordLocation]) == true) {
 			return true;
 		}
 
 		return false;
 	}
 
-	
 	public function getUserName() {
 		if($this->hasUserName() == true) {
 			return $_POST[$this->userNameLocation];	
@@ -72,24 +72,53 @@ class LoginView {
 		$year = strftime("%Y");
 		$time = strftime("%X");
 
-		$date .=   $dayofWeek . ",  Den " . $day . " " . $month . " år " . $year . ". Klockan är [" . $time . "].";
+		$date .=   $dayofWeek . ",  den " . $day . " " . $month . " år " . $year . ". Klockan är [" . $time . "].";
 
 		return $date;
 	}
 
-	public function showLoginForm () {
-
+	public function showLoginForm() {
 		$date = $this->getDate();
+		$message = "";
+		$username = "";
+
+		if ($this->hasLogOut() == true) {
+			$this->cookieStorage->save("</br> Utloggning lyckades </br> </br>");
+			header("location:");
+		}
+		else {
+			$message .= $this->cookieStorage->load();
+		}
+
+		if ($this->hasSubmit() == true) {
+			if ($this->hasUserName() == false) {
+				$message .= "</br> Användarnamnet saknas </br> </br>";
+				
+			}
+
+			if ($this->hasPassword() == false) {
+				$message .= "</br> Lösenord saknas </br> </br>";
+			}
+
+			if ($this->hasUserName() && $this->hasPassword() == true) {
+				if ($this->model->isLoggedIn() == false) {
+					$message .= "</br> Felaktigt användarnamn och/eller lösenord </br> </br>";
+					$username .= $this->getUserName();
+				}
+			}
+
+		}
 
 		$htmlbody = 
 		"<form method='post'>
-
 		<h2>Ej inloggad</h2>
 		<fieldset>
 		<legend>Logga in - Skriv in användarnamn och lösenord</legend>
 
+		$message
+
 		Användarnamn:
-		<input type='text' name='$this->userNameLocation' maxlength='35'>
+		<input type='text' name='$this->userNameLocation' value='$username' maxlength='35'>
 
 		Lösenord:
 		<input type='password' name='$this->passwordLocation' maxlength='35'>
@@ -109,4 +138,36 @@ class LoginView {
 
 		return $htmlbody;
 	}
+
+	public function showMemberSection() {
+		$date = $this->getDate();
+		$message = "";
+
+		if($this->hasSubmit() == true) {
+			$this->cookieStorage->save("</br> Inloggning lyckades </br> </br>");
+			header("location:");
+		}
+		else {
+			$message .= $this->cookieStorage->load();
+		}
+
+		$htmlbody = 
+		"<form method='post'>
+		<h2>Admin är inloggad</h2>
+
+		$message
+
+		<input type='submit' value='Logga ut' name='$this->logoutLocation'>
+
+		</br>
+		</br>
+
+		$date
+
+		</form>
+
+		";
+
+		return $htmlbody;
+	}	
 }
