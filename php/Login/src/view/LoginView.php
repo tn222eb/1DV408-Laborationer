@@ -9,9 +9,18 @@ class LoginView {
 	private $userNameLocation = "username";
 	private $passwordLocation = "password";
 	private $logoutLocation = "logout";
+	private $message = "";
 
 	public function __construct(\model\ LoginModel $model) {
 		$this->model = $model;
+	}
+
+	public function hasChecked() {
+		if (isset($_POST["checkbox"]) == true) {
+			return true;
+		}
+
+		return false;
 	}
 
 	public function hasUserName() {
@@ -20,7 +29,6 @@ class LoginView {
 		}
 
 		return false;
-
 	}
 
 	public function hasPassword() {
@@ -33,13 +41,13 @@ class LoginView {
 
 	public function getUserName() {
 		if($this->hasUserName() == true) {
-			return $_POST[$this->userNameLocation];	
+			return htmlentities($_POST[$this->userNameLocation]);
 		}
 	}
 
 	public function getPassword() {
 		if($this->hasPassword() == true) {
-		return $_POST[$this->passwordLocation];
+		return htmlentities($_POST[$this->passwordLocation]);
 		}
 	}
 
@@ -76,26 +84,30 @@ class LoginView {
 
 	public function showLoginForm() {
 		$date = $this->getDate();
-		$message = "";
 		$username = "";
 
 		if ($this->hasLogOut() == true) {
-			$message .= "</br> Utloggning lyckades </br> </br>";
+			$this->message .= "</br> Utloggning lyckades </br> </br>";
 		}
 
 		if ($this->hasSubmit() == true) {
 			if ($this->hasUserName() == false) {
-				$message .= "</br> Användarnamnet saknas </br> </br>";
-				
+				$this->message .= "</br> Användarnamnet saknas </br> </br>";
 			}
 
-			if ($this->hasPassword() == false) {
-				$message .= "</br> Lösenord saknas </br> </br>";
+			else {
+				if ($this->hasPassword() == false) {
+					$this->message .= "</br> Lösenord saknas </br> </br>";
+
+					if ($this->hasUserName() == true) {
+						$username = $this->getUserName();
+					}
+				}
 			}
 
 			if ($this->hasUserName() && $this->hasPassword() == true) {
 				if ($this->model->isLoggedIn() == false) {
-					$message .= "</br> Felaktigt användarnamn och/eller lösenord </br> </br>";
+					$this->message .= "</br> Felaktigt användarnamn och/eller lösenord </br> </br>";
 					$username .= $this->getUserName();
 				}
 			}
@@ -108,7 +120,7 @@ class LoginView {
 		<fieldset>
 		<legend>Logga in - Skriv in användarnamn och lösenord</legend>
 
-		$message
+		$this->message
 
 		Användarnamn:
 		<input type='text' name='$this->userNameLocation' value='$username' maxlength='35'>
@@ -117,7 +129,7 @@ class LoginView {
 		<input type='password' name='$this->passwordLocation' maxlength='35'>
 
 		Håll mig inloggad:
-		<input type='checkbox' name='checkbox' value='keeploggedin'>
+		<input type='checkbox' name='checkbox'>
 
 		<input type='submit' name='submit' value='Logga in'>
 
@@ -134,17 +146,22 @@ class LoginView {
 
 	public function showMemberSection() {
 		$date = $this->getDate();
-		$message = "";
 
 		if($this->hasSubmit() == true) {
-			$message .= "</br> Inloggning lyckades </br> </br>";
+
+			if ($this->hasChecked() == true) {
+				$this->message .= "</br> Inloggning lyckades och vi kommer att komma ihåg dig nästa gång </br> </br>";
+			}
+			else {
+				$this->message .= "</br> Inloggning lyckades </br> </br>";
+			}
 		}
 
 		$htmlbody = 
 		"<form method='post'>
 		<h2>Admin är inloggad</h2>
 
-		$message
+		$this->message
 
 		<input type='submit' value='Logga ut' name='$this->logoutLocation'>
 

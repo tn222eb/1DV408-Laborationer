@@ -17,11 +17,14 @@ class LoginController {
 	public function Display() {
 		// Handle input	
 		if($this->view->hasLogOut() == true) {
-			$this->doLogout();
+			$this->model->logOut();
 		}
 
 		if ($this->view->hasSubmit() == true) {
-			$this->doLogin();
+			$username = $this->view->getUserName();
+			$password = $this->view->getPassword();
+
+			$this->model->logIn($username, $password);
 		}
 
 		// Generate output
@@ -33,16 +36,5 @@ class LoginController {
 			return $this->view->showLoginForm();
 		}
 	}
-
-	public function doLogin() {
-		$username = $this->view->getUserName();
-		$password = $this->view->getPassword();
-
-		$this->model->logIn($username, $password);
-	}
-
-	public function doLogout() {
-		$this->model->logOut();
-	}	
 }
 

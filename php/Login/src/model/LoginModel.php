@@ -2,13 +2,14 @@
 
 namespace model;
 
+require_once("src/model/LoginDAL.php");
+
 class LoginModel {
 
-	private $loginPassword;
-	private $loginUserName;
+	private $loginDAL;
 
 	public function __construct() {
-		$this->getLoginData();
+		$this->loginDAL = new \model\LoginDAL();
 
 		session_start();
 	}
@@ -22,23 +23,13 @@ class LoginModel {
 		return false;
 	}
 
-	public function getLoginData() {
-		$filename = "LoginData.txt";
-		$fileHandler = fopen($filename, "r");
-		$loginData = fread($fileHandler, filesize($filename));
-		fclose($fileHandler);
-
-		$this->loginUserName = substr($loginData, 0, 5);
-		$this->loginPassword = substr($loginData, 5, 8);
-	}
-
 	public function logIn($username, $password) {
-		if ($username == $this->loginUserName && $password == $this->loginPassword) {
+		if (($username == $this->loginDAL->getloginUserName() && $password == $this->loginDAL->getloginPassword()) == true) {
 			$_SESSION["valid"] = true;
 		}
 	}
 
 	public function logOut() {
-		unset($_SESSION["valid"]);
+		unset($_SESSION["valid"]);	
 	}	
 }
