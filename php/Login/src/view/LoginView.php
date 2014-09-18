@@ -3,9 +3,11 @@
 namespace view;
 
 require_once("src/model/LoginModel.php");
+require_once("src/view/CookieJar.php");
 
 class LoginView {
 	private $model;
+	private $cookieJar;
 	private $userNameLocation = "username";
 	private $passwordLocation = "password";
 	private $logoutLocation = "logout";
@@ -13,6 +15,42 @@ class LoginView {
 
 	public function __construct(\model\ LoginModel $model) {
 		$this->model = $model;
+		$this->cookieJar = new \view\CookieJar($this->model);
+	}
+
+	public function save($cookieName, $cookieValue) {
+		$this->cookieJar->save($cookieName, $cookieValue);
+	}
+
+	public function remove($cookieName) {
+		$this->cookieJar->remove($cookieName);
+	}
+
+	public function hasLoginCookies() {
+		if ($this->cookieJar->hasLoginCookies() == true) {
+		//	$this->model->setSession();
+			return true;
+		}
+	}
+
+	//public function getCookieValue($cookieName) {
+	//	return $this->cookieJar->getCookieValue($cookieName);
+	//}
+
+	public function getCookieUserName() {
+		return $this->cookieJar->getCookieUserName();
+	}
+
+	public function getCookiePassword() {
+		return $this->cookieJar->getCookiePassword();
+	}	
+
+	public function getUserAgent() {
+		return $_SERVER["HTTP_USER_AGENT"];
+	}
+
+	public function getClientIdentifer() {
+		return $_SERVER["REMOTE_ADDR"];
 	}
 
 	public function hasChecked() {
@@ -85,6 +123,7 @@ class LoginView {
 	public function showLoginForm() {
 		$date = $this->getDate();
 		$username = "";
+		$checked = "";
 
 		if ($this->hasLogOut() == true) {
 			$this->message .= "</br> Utloggning lyckades </br> </br>";
@@ -102,6 +141,10 @@ class LoginView {
 					if ($this->hasUserName() == true) {
 						$username = $this->getUserName();
 					}
+
+					if($this->hasChecked() == true) {
+						$checked .= "checked";
+					}					
 				}
 			}
 
@@ -109,6 +152,10 @@ class LoginView {
 				if ($this->model->isLoggedIn() == false) {
 					$this->message .= "</br> Felaktigt användarnamn och/eller lösenord </br> </br>";
 					$username .= $this->getUserName();
+
+					if($this->hasChecked() == true) {
+						$checked .= "checked";
+					}
 				}
 			}
 
@@ -129,7 +176,7 @@ class LoginView {
 		<input type='password' name='$this->passwordLocation' maxlength='35'>
 
 		Håll mig inloggad:
-		<input type='checkbox' name='checkbox'>
+		<input type='checkbox' name='checkbox' $checked>
 
 		<input type='submit' name='submit' value='Logga in'>
 
@@ -144,8 +191,8 @@ class LoginView {
 		return $htmlbody;
 	}
 
-	public function showMemberSection() {
-		$date = $this->getDate();
+	public function showMemberSection($didLogin) {
+		$date = $this->getDate();	
 
 		if($this->hasSubmit() == true) {
 
@@ -154,6 +201,11 @@ class LoginView {
 			}
 			else {
 				$this->message .= "</br> Inloggning lyckades </br> </br>";
+			}
+		}
+		else {
+			if($this->cookieJar->hasLoginCookies() == true && $didLogin == true) {
+				$this->message .= "</br> Inloggning lyckades via cookies </br> </br>";
 			}
 		}
 

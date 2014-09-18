@@ -5,7 +5,7 @@ require_once("../common/HTMLView.php");
 
 $logincontroller = new \controller\LoginController();
 
-$html = $logincontroller->Display();
+$html = $logincontroller->doDisplay();
 
 $view = new HTMLView();
 
