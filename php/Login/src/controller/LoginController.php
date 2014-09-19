@@ -9,6 +9,7 @@ class LoginController {
 	private $view;
 	private $model;
 	private $message = "";
+	private $didLogin = false;
 
 	public function __construct() {
 		$this->model = new \model\LoginModel();
@@ -23,6 +24,7 @@ class LoginController {
 	public function doCookieLogout() {
 		if ($this->view->hasLoginCookies() == true) {
 			if ($this->view->hasLogOut() == true) {
+				$this->model->logOut();
 				$this->view->remove("LoginView::UserName");
 				$this->view->remove("LoginView::Password");
 				return true;
@@ -38,12 +40,12 @@ class LoginController {
 			$ip = $this->view->getClientIdentifer();
 			$userCookieName = $this->view->getCookieUserName();
 			$userCookiePassword = $this->view->getCookiePassword();
+			$currentTime = time();
 
-			if ($this->model->logIn($inputUsername, $inputPassword, $userCookieName, $userCookiePassword, $ip) == true) {
+			if ($this->model->logIn($inputUsername, $inputPassword, $userCookieName, $userCookiePassword, $ip, $currentTime) == true) {
 
 				if($this->view->hasChecked() == true) {
 					$browser = $this->view->getUserAgent();
-					$currentTime = time();
 					$cookiePassword = $this->model->createCookieInformation($browser, $currentTime);
 
 					$this->view->save("LoginView::UserName", $inputUsername);
@@ -59,25 +61,31 @@ class LoginController {
 		}		
 
 	public function doDisplay() {
-		$didLogin = false;
+
 		if($this->view->hasLogOut() == true) {
 			$this->doLogOut();
 		}
 
 		if ($this->view->hasSubmit() == true || $this->view->hasLoginCookies() == true) {
-			$didLogin = $this->doLogin();
+
+			if($this->model->isLoggedIn() == true) {
+				$this->didLogin = false;
+			}
+			else {
+				$this->didLogin = $this->doLogin();
+			}
 		}
 
 		if ($this->doCookieLogout() == true) {
-			return $this->view->showLoginForm();
+			return $this->view->showLoginForm($this->didLogin);
 		}
 
 		if ($this->model->isLoggedIn() == true ) {
-			return $this->view->showMemberSection($didLogin);
+			return $this->view->showMemberSection($this->didLogin);
 		}
 
 		else {
-			return $this->view->showLoginForm();
+			return $this->view->showLoginForm($this->didLogin);
 		}
 	}	
 

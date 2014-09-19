@@ -27,10 +27,8 @@ class LoginView {
 	}
 
 	public function hasLoginCookies() {
-		if ($this->cookieJar->hasLoginCookies() == true) {
-		//	$this->model->setSession();
-			return true;
-		}
+		return $this->cookieJar->hasLoginCookies();
+
 	}
 
 	//public function getCookieValue($cookieName) {
@@ -120,20 +118,28 @@ class LoginView {
 		return $date;
 	}
 
-	public function showLoginForm() {
+	public function showLoginForm($didLogin) {
 		$date = $this->getDate();
 		$username = "";
 		$checked = "";
 
+	
 		if ($this->hasLogOut() == true) {
 			$this->message .= "</br> Utloggning lyckades </br> </br>";
+		}
+		else {
+				if ($this->cookieJar->hasLoginCookies() == true && $didLogin == false) {
+					$this->message .= "</br>Felaktig information i kakan </br> </br>";
+					$this->remove("LoginView::UserName");
+					$this->remove("LoginView::Password");
+				}				
+
 		}
 
 		if ($this->hasSubmit() == true) {
 			if ($this->hasUserName() == false) {
 				$this->message .= "</br> Användarnamnet saknas </br> </br>";
 			}
-
 			else {
 				if ($this->hasPassword() == false) {
 					$this->message .= "</br> Lösenord saknas </br> </br>";
@@ -158,7 +164,6 @@ class LoginView {
 					}
 				}
 			}
-
 		}
 
 		$htmlbody = 

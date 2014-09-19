@@ -13,7 +13,7 @@ class CookieJar {
 	}
 
 	public function save($cookieName, $cookieValue) {
-		setcookie($cookieName, $cookieValue, time() +60);
+		setcookie($cookieName, $cookieValue, time() +10);
 	}
 
 	public function remove($cookieName) {
