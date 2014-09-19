@@ -13,11 +13,15 @@ class CookieJar {
 	}
 
 	public function save($cookieName, $cookieValue) {
-		setcookie($cookieName, $cookieValue, time() +10);
+		setcookie($cookieName, $cookieValue, $this->cookieTime());
 	}
 
 	public function remove($cookieName) {
 		setcookie($cookieName, "" , time() -1);
+	}
+
+	public function cookieTime() {
+		return time() + 30;
 	}
 
 	public function getClientIdentifer() {

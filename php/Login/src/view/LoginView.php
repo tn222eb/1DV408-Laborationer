@@ -31,9 +31,9 @@ class LoginView {
 
 	}
 
-	//public function getCookieValue($cookieName) {
-	//	return $this->cookieJar->getCookieValue($cookieName);
-	//}
+	public function cookieTime() {
+		return $this->cookieJar->cookieTime();
+	}
 
 	public function getCookieUserName() {
 		return $this->cookieJar->getCookieUserName();

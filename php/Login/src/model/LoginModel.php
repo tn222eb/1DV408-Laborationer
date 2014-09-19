@@ -15,6 +15,7 @@ class LoginModel {
 		session_start();
 
 		$this->loginDAL = new \model\LoginDAL();
+		$this->getCookieInformation();
 	}
 
 	public function isLoggedIn() {
@@ -26,14 +27,12 @@ class LoginModel {
 		return false;
 	}
 
-	public function logIn($username, $password, $userCookieUserName, $userCookiePassword, $clientIdentifer) {
+	public function logIn($username, $password, $userCookieUserName, $userCookiePassword, $clientIdentifer, $currentTime) {
 		$newUserCookiePassword = $this->createCookieInformation($userCookiePassword, $clientIdentifer);
-		$this->getCookieInformation();
-		$currentTime = time();
 
 		if (($username == $this->loginDAL->getloginUserName() && $password == $this->loginDAL->getloginPassword()) == true
 			|| $userCookieUserName == $this->cookieName && $newUserCookiePassword == $this->cookiePassword
-			&& $currentTime < $this->cookieDate) {
+			&& $this->cookieDate > $currentTime == true) {
 			$_SESSION["valid"] = true;
 			return true;
 		}

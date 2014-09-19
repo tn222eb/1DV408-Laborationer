@@ -21,7 +21,7 @@ class LoginController {
 		}
 
 
-	public function doCookieLogout() {
+	public function doLogoutWithCookies() {
 		if ($this->view->hasLoginCookies() == true) {
 			if ($this->view->hasLogOut() == true) {
 				$this->model->logOut();
@@ -45,13 +45,14 @@ class LoginController {
 			if ($this->model->logIn($inputUsername, $inputPassword, $userCookieName, $userCookiePassword, $ip, $currentTime) == true) {
 
 				if($this->view->hasChecked() == true) {
+
 					$browser = $this->view->getUserAgent();
 					$cookiePassword = $this->model->createCookieInformation($browser, $currentTime);
 
 					$this->view->save("LoginView::UserName", $inputUsername);
 					$this->view->save("LoginView::Password", $cookiePassword);
 					$cryptPassword = $this->model->createCookieInformation($cookiePassword, $ip);
-					$this->model->setCookieInformation($inputUsername, $cryptPassword, $currentTime);
+					$this->model->setCookieInformation($inputUsername, $cryptPassword, $this->view->cookieTime());
 				}
 
 				return true;
@@ -76,7 +77,7 @@ class LoginController {
 			}
 		}
 
-		if ($this->doCookieLogout() == true) {
+		if ($this->doLogoutWithCookies() == true) {
 			return $this->view->showLoginForm($this->didLogin);
 		}
 
