@@ -24,8 +24,8 @@ class LoginController {
 		if ($this->view->hasLoginCookies() == true) {
 			if ($this->view->hasLogOut() == true) {
 				$this->model->logOut();
-				$this->view->remove("LoginView::UserName");
-				$this->view->remove("LoginView::Password");
+				$this->view->remove($this->view->cookieNameForUserName());
+				$this->view->remove($this->view->cookieNameForPassword());
 				return true;
 			}
 		}		
@@ -47,8 +47,8 @@ class LoginController {
 					$browser = $this->view->getUserAgent();
 					$cookiePassword = $this->model->createCookieInformation($browser, $currentTime);
 
-					$this->view->save("LoginView::UserName", $inputUsername);
-					$this->view->save("LoginView::Password", $cookiePassword);
+					$this->view->save($this->view->cookieNameForUserName() , $inputUsername);
+					$this->view->save($this->view->cookieNameForPassword() , $cookiePassword);
 					$cryptPassword = $this->model->createCookieInformation($cookiePassword, $ip);
 					$this->model->setCookieInformation($inputUsername, $cryptPassword, $this->view->cookieExpireTime());
 				}

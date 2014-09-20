@@ -10,6 +10,8 @@ class LoginModel {
 	private $cookieName;
 	private $cookiePassword;
 	private $cookieDate;
+	private $fileName = "CookieInfo.txt";
+	private $sessionName = "valid";
 
 	public function __construct() {
 		session_start();
@@ -19,7 +21,7 @@ class LoginModel {
 	}
 
 	public function isLoggedIn() {
-		if (isset($_SESSION["valid"]) == true)
+		if (isset($_SESSION[$this->sessionName]) == true)
 		 {
 			return true;
 		}	
@@ -33,7 +35,7 @@ class LoginModel {
 		if (($username == $this->loginDAL->getloginUserName() && $password == $this->loginDAL->getloginPassword()) == true
 			|| $userCookieUserName == $this->cookieName && $newUserCookiePassword == $this->cookiePassword
 			&& $this->cookieDate > $currentTime == true) {
-			$_SESSION["valid"] = true;
+			$_SESSION[$this->sessionName] = true;
 			return true;
 		}
 		
@@ -41,11 +43,11 @@ class LoginModel {
 	}
 
 	public function logOut() {
-			unset($_SESSION["valid"]);
+			unset($_SESSION[$this->sessionName]);
 	}
 
 	public function getNumLines() {
-		$lines = @file("CookieInfo.txt");
+		$lines = @file($this->fileName);
 		if ($lines === FALSE) {
 			return 0;
 		}
@@ -60,7 +62,7 @@ class LoginModel {
 		}
 
 		else {
-			$file = "CookieInfo.txt";
+			$file = $this->fileName;
 			$fileHandler = fopen($file, "r");
 			$information = fread($fileHandler, filesize($file));
 			fclose($fileHandler);
@@ -77,7 +79,7 @@ class LoginModel {
 	}
 
 	public function setCookieInformation($username, $password, $currentTime) {
-		$file = "CookieInfo.txt";
+		$file = $this->fileName;
 		$fileHandler = fopen($file, "w");
 		fwrite($fileHandler, $username . "," . $password . "," . $currentTime);
 		fclose($fileHandler);

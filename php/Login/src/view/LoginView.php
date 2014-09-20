@@ -18,6 +18,14 @@ class LoginView {
 		$this->cookieJar = new \view\CookieJar($this->model);
 	}
 
+	public function cookieNameForUserName() {
+		return $this->cookieJar->cookieNameForUserName();
+	}
+
+	public function cookieNameForPassword() {
+		return $this->cookieJar->cookieNameForPassword();
+	}	
+
 	public function save($cookieName, $cookieValue) {
 		$this->cookieJar->save($cookieName, $cookieValue);
 	}
@@ -130,8 +138,8 @@ class LoginView {
 		else {
 				if ($this->cookieJar->hasLoginCookies() == true && $didLogin == false) {
 					$this->message .= "</br>Felaktig information i kakan </br> </br>";
-					$this->remove("LoginView::UserName");
-					$this->remove("LoginView::Password");
+					$this->remove($this->cookieNameForUserName());
+					$this->remove($this->cookieNameForPassword());
 				}				
 
 		}
