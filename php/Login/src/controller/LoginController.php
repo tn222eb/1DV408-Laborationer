@@ -40,11 +40,11 @@ class LoginController {
 			$userCookieName = $this->view->getCookieUserName();
 			$userCookiePassword = $this->view->getCookiePassword();
 			$currentTime = time();
+			$browser = $this->view->getUserAgent();
 
-			if ($this->model->logIn($inputUsername, $inputPassword, $userCookieName, $userCookiePassword, $ip, $currentTime) == true) {
+			if ($this->model->logIn($inputUsername, $inputPassword, $userCookieName, $userCookiePassword, $ip, $currentTime, $browser) == true) {
 
 				if($this->view->hasChecked() == true) {
-					$browser = $this->view->getUserAgent();
 					$cookiePassword = $this->model->createCookieInformation($browser, $currentTime);
 
 					$this->view->save($this->view->cookieNameForUserName() , $inputUsername);
@@ -76,7 +76,7 @@ class LoginController {
 			return $this->view->showLoginForm($didLogin);
 		}
 
-		if ($this->model->isLoggedIn() == true ) {
+		if ($this->model->isLoggedIn() == true && $this->model->isValidSession($this->view->getUserAgent()) == true) {
 			return $this->view->showMemberSection($didLogin);
 		}
 

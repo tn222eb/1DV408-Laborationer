@@ -29,13 +29,20 @@ class LoginModel {
 		return false;
 	}
 
-	public function logIn($username, $password, $userCookieUserName, $userCookiePassword, $clientIdentifer, $currentTime) {
+	public function isValidSession($current) {
+		if ($current == $_SESSION[$this->sessionName]) {
+			return true;
+		}
+		return false;
+	}
+
+	public function logIn($username, $password, $userCookieUserName, $userCookiePassword, $clientIdentifer, $currentTime, $browser) {
 		$newUserCookiePassword = $this->createCookieInformation($userCookiePassword, $clientIdentifer);
 
 		if (($username == $this->loginDAL->getloginUserName() && $password == $this->loginDAL->getloginPassword()) == true
 			|| $userCookieUserName == $this->cookieName && $newUserCookiePassword == $this->cookiePassword
 			&& $this->cookieDate > $currentTime == true) {
-			$_SESSION[$this->sessionName] = true;
+			$_SESSION[$this->sessionName] = $browser;
 			return true;
 		}
 		
